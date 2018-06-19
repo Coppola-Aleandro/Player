@@ -18,7 +18,7 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
     this.audio = new Audio();
     this.loadSong();
-  }
+  };
 
   playPause(toggle) {
     console.log("playPause");
@@ -37,7 +37,7 @@ export class HomeComponent implements OnInit {
       this.played = true
       this.audio.play();
     }
-  }
+  };
 
   backward() {
     console.log("backward");
@@ -51,7 +51,7 @@ export class HomeComponent implements OnInit {
       this.audio.currentTime = 0;
     }
     this.loadSong();
-  }
+  };
 
   forward() {
     console.log("forward");
@@ -61,7 +61,7 @@ export class HomeComponent implements OnInit {
       this.current_song = this.current_song + 1;
     }
     this.loadSong();
-  }
+  };
 
   loadSong() {
     console.log("loadSong");
@@ -69,7 +69,7 @@ export class HomeComponent implements OnInit {
     this.audio.load();
     this.playPause(false);
     this.getPercentProg();
-  }
+  };
 
 
   getPercentProg() {
@@ -84,10 +84,10 @@ export class HomeComponent implements OnInit {
     this.audio.addEventListener("ended", (state) => {
       this.forward();
     });
-  }
+  };
 
   changeTime(value) {
     this.audio.currentTime = value;
-  }
+  };
 
 }
