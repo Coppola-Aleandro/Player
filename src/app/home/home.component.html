@@ -1,0 +1,36 @@
+<div class="row" style="background-color: #0f0f0f">
+  <div class="col-sm-12">
+    <ul class="nav justify-content-center">
+      <li class="nav-item">
+        <a class="nav-link btn" href="#" (click)="backward()">
+          <i class="fas fa-backward"></i>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link btn" href="#" (click)="playPause(true)">
+          <i class="{{played ? 'fas fa-pause' : 'fas fa-play'}}"></i>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link btn" href="#" (click)="forward()">
+          <i class="fas fa-forward"></i>
+        </a>
+      </li>
+    </ul>
+    <hr>
+    <input style="width: 100%" class="slider" #timeSelector name="ram" type="range" min="0" max="{{current_duration}}" step="0.01" [(ngModel)]="current_time" (ngModelChange)="changeTime($event)" value="0">
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-12">
+
+  </div>
+</div>
+
+<!-- <div class="row">
+    <div class="col-sm-12">
+      <div class="form-group">
+        <audio src="{{audio.src}}" controls></audio>
+      </div>
+    </div>
+  </div> -->
