@@ -55,3 +55,17 @@
   display: inline-block;
   width: 80%;
 }
+
+.queue:focus{
+  background-color: inherit !important;
+}
+
+.queue_default, .queue.queue_default:focus {
+  background-color: #ffffff !important;
+  color: #424242;
+}
+
+.queue_selected, .queue.queue_selected:focus {
+  background-color: #4CAF50 !important;
+  color: #ffffff;
+}

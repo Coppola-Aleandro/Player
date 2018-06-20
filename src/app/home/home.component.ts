@@ -8,41 +8,22 @@ import { Component, OnInit } from '@angular/core';
 
 export class HomeComponent implements OnInit {
 
-  constructor() { }
+  constructor() {
+
+  }
 
   player = {
     songs: [
-      {
-        name: "Canzone 1",
-        file: "01",
-      }, {
-        name: "Canzone 2",
-        file: "02",
-      }, {
-        name: "Canzone 3",
-        file: "03",
-      }, {
-        name: "Canzone 4",
-        file: "04",
-      }, {
-        name: "Canzone 5",
-        file: "05",
-      }, {
-        name: "Canzone 6",
-        file: "06",
-      }, {
-        name: "Canzone 7",
-        file: "07",
-      }, {
-        name: "Canzone 8",
-        file: "08",
-      }, {
-        name: "Canzone 9",
-        file: "09",
-      }, {
-        name: "Canzone 10",
-        file: "10",
-      }
+      new Song(0, "Canzone 1", "01"),
+      new Song(1, "Canzone 2", "02"),
+      new Song(2, "Canzone 3", "03"),
+      new Song(3, "Canzone 4", "04"),
+      new Song(4, "Canzone 5", "05"),
+      new Song(5, "Canzone 6", "06"),
+      new Song(6, "Canzone 7", "07"),
+      new Song(7, "Canzone 8", "08"),
+      new Song(8, "Canzone 9", "09"),
+      new Song(9, "Canzone 10", "10"),
     ]
   }
   audio;
@@ -52,20 +33,33 @@ export class HomeComponent implements OnInit {
   current_time = 0;
   mute = false;
   songRepeat = false;
-  songRandom = false;
-
-  //Keys
-  song_first_key = 1;
-  song_last_key = 10;
+  song_random = false;
 
   //Song info
-  current_song = 1;
-  current_duration = 0;
-  current_song_name = "";
+  song;
+  song_index;
 
   ngOnInit() {
     this.audio = new Audio();
+    this.song_index = 0;
     this.loadSong();
+  };
+
+
+ /**
+   * Load song
+   */
+  loadSong() {
+    if(this.player.songs[this.song_index] == null) {
+      return
+    }
+    console.log("loadSong");
+    this.song = this.player.songs[this.song_index];
+    console.log(this.song.getSongFileName());
+    this.audio.src = "../../../assets/songs/" + this.song.getSongFileName() + ".mp3";
+    this.audio.load();
+    this.playPause(false);
+    this.songEvent();
   };
 
   playPause(toggle) {
@@ -78,37 +72,37 @@ export class HomeComponent implements OnInit {
       }
       return
     }
+
     if (this.played) {
-      this.played = false
       this.audio.pause();
     } else {
-      this.played = true
       this.audio.play();
     }
+    this.played = !this.played;
   };
 
   backward() {
     console.log("backward");
     if (this.audio.currentTime < 2) {
       if (this.randomSong()) { return }
-      if (this.current_song == this.song_first_key) {
-        this.current_song = this.song_last_key;
+
+      if (this.song_index == 0) {
+        this.song_index = this.player.songs.length - 1;
       } else {
-        this.current_song = this.current_song - 1;
+        this.song_index = this.song_index - 1;
       }
-    } else {
-      this.audio.currentTime = 0;
     }
+    this.audio.currentTime = 0;
     this.loadSong();
   };
 
   forward() {
     console.log("forward");
     if (this.randomSong()) { return }
-    if (this.current_song == this.song_last_key) {
-      this.current_song = this.song_first_key;
+    if (this.song_index == this.player.songs.length - 1) {
+      this.song_index = 0;
     } else {
-      this.current_song = this.current_song + 1;
+      this.song_index = this.song_index + 1;
     }
     this.loadSong();
   };
@@ -117,33 +111,18 @@ export class HomeComponent implements OnInit {
    * Random song
    */
   randomSong(){
-    if (this.songRandom) {
-      this.current_song = this.getRandomInt(this.song_first_key, this.song_last_key);
+    if (this.song_random) {
+      this.song_index = this.getRandomInt(0, this.player.songs.length - 1);
       this.loadSong();
       return true
     }
     return false
   }
 
-  goToSong(song){
-    var songID = parseInt(song);
-    this.current_song = songID
+  goToSong(song: Song){
+    this.song_index = song.song_id;
     this.loadSong();
   }
-
-  /**
-   * Load song
-   */
-  loadSong() {
-    console.log("loadSong");
-    this.current_song_name = this.player.songs[this.current_song-1].name
-    console.log(this.getFileName(this.current_song));
-    this.audio.src = "../../../assets/songs/" + this.getFileName(this.current_song) + ".mp3";
-    this.audio.load();
-    this.playPause(false);
-    this.songEvent();
-  };
-
 
   songEvent() {
     this.audio.addEventListener("timeupdate", (currentTime) => {
@@ -151,7 +130,7 @@ export class HomeComponent implements OnInit {
     });
 
     this.audio.addEventListener("loadedmetadata", (meta) => {
-      this.current_duration = meta.path[0].duration;
+      this.song.song_duration = meta.path[0].duration;
     });
 
     this.audio.addEventListener("ended", (state) => {
@@ -165,23 +144,31 @@ export class HomeComponent implements OnInit {
   };
 
   changeRandom() {
-    this.songRandom = !this.songRandom;
-    console.log(this.songRandom);
+    this.song_random = !this.song_random;
+    console.log(this.song_random);
   }
 
   getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
+}
 
-  getFileName(file) {
-    var songID = parseInt(file);
-    var fileName = ""
-    if (songID < 10) {
-      fileName = "0" + songID
-    } else {
-      fileName = songID.toString()
-    }
-    return "track-" + fileName;
+class Song {
+  song_id: Int8Array;
+  song_name: string;
+  song_file: string;
+  song_duration: Float32Array;
+  constructor(song_id, song_name, song_file){
+    this.song_id = song_id;
+    this.song_name = song_name;
+    this.song_file = song_file;
   }
 
+  getSongNumber(){
+    return parseInt(this.song_file);
+  }
+
+  getSongFileName(){
+    return "track-"+this.song_file;
+  }
 }
