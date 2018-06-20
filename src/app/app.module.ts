@@ -5,13 +5,11 @@ import { FormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './/app-routing.module';
-import { QueueComponent } from './queue/queue.component';
 import { HomeComponent } from './home/home.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    QueueComponent,
     HomeComponent
   ],
   imports: [

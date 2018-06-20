@@ -1,5 +1,17 @@
+.song_name{
+  color: #4CAF50;
+}
+
 .btn{
   color: #4CAF50;
+}
+
+.btn_active{
+  color: #4CAF50;
+}
+
+.btn_disable{
+  color: #ffffff;
 }
 
 .slider {
@@ -33,4 +45,13 @@
   height: 25px;
   background: #4CAF50;
   cursor: pointer;
+}
+
+.volume_title{
+  display: inline-block;
+  width: 20%;
+}
+.volume {
+  display: inline-block;
+  width: 80%;
 }

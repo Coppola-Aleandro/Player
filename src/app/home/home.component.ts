@@ -5,15 +5,63 @@ import { Component, OnInit } from '@angular/core';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
+
 export class HomeComponent implements OnInit {
 
   constructor() { }
 
+  player = {
+    songs: [
+      {
+        name: "Canzone 1",
+        file: "01",
+      }, {
+        name: "Canzone 2",
+        file: "02",
+      }, {
+        name: "Canzone 3",
+        file: "03",
+      }, {
+        name: "Canzone 4",
+        file: "04",
+      }, {
+        name: "Canzone 5",
+        file: "05",
+      }, {
+        name: "Canzone 6",
+        file: "06",
+      }, {
+        name: "Canzone 7",
+        file: "07",
+      }, {
+        name: "Canzone 8",
+        file: "08",
+      }, {
+        name: "Canzone 9",
+        file: "09",
+      }, {
+        name: "Canzone 10",
+        file: "10",
+      }
+    ]
+  }
   audio;
+
+  //controls
   played = false;
-  current_song = 0;
-  current_duration = 0;
   current_time = 0;
+  mute = false;
+  songRepeat = false;
+  songRandom = false;
+
+  //Keys
+  song_first_key = 1;
+  song_last_key = 10;
+
+  //Song info
+  current_song = 1;
+  current_duration = 0;
+  current_song_name = "";
 
   ngOnInit() {
     this.audio = new Audio();
@@ -42,8 +90,9 @@ export class HomeComponent implements OnInit {
   backward() {
     console.log("backward");
     if (this.audio.currentTime < 2) {
-      if (this.current_song == 0) {
-        this.current_song = 2;
+      if (this.randomSong()) { return }
+      if (this.current_song == this.song_first_key) {
+        this.current_song = this.song_last_key;
       } else {
         this.current_song = this.current_song - 1;
       }
@@ -55,24 +104,48 @@ export class HomeComponent implements OnInit {
 
   forward() {
     console.log("forward");
-    if (this.current_song == 2) {
-      this.current_song = 0;
+    if (this.randomSong()) { return }
+    if (this.current_song == this.song_last_key) {
+      this.current_song = this.song_first_key;
     } else {
       this.current_song = this.current_song + 1;
     }
     this.loadSong();
   };
 
+  /**
+   * Random song
+   */
+  randomSong(){
+    if (this.songRandom) {
+      this.current_song = this.getRandomInt(this.song_first_key, this.song_last_key);
+      this.loadSong();
+      return true
+    }
+    return false
+  }
+
+  goToSong(song){
+    var songID = parseInt(song);
+    this.current_song = songID
+    this.loadSong();
+  }
+
+  /**
+   * Load song
+   */
   loadSong() {
     console.log("loadSong");
-    this.audio.src = "../../../assets/songs/song_" + this.current_song + ".mp3";
+    this.current_song_name = this.player.songs[this.current_song-1].name
+    console.log(this.getFileName(this.current_song));
+    this.audio.src = "../../../assets/songs/" + this.getFileName(this.current_song) + ".mp3";
     this.audio.load();
     this.playPause(false);
-    this.getPercentProg();
+    this.songEvent();
   };
 
 
-  getPercentProg() {
+  songEvent() {
     this.audio.addEventListener("timeupdate", (currentTime) => {
       this.current_time = this.audio.currentTime;
     });
@@ -86,8 +159,29 @@ export class HomeComponent implements OnInit {
     });
   };
 
-  changeTime(value) {
-    this.audio.currentTime = value;
+  changeAudio() {
+    this.mute = !this.mute;
+    this.audio.volume = this.mute ? 0 : 1;
   };
+
+  changeRandom() {
+    this.songRandom = !this.songRandom;
+    console.log(this.songRandom);
+  }
+
+  getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  getFileName(file) {
+    var songID = parseInt(file);
+    var fileName = ""
+    if (songID < 10) {
+      fileName = "0" + songID
+    } else {
+      fileName = songID.toString()
+    }
+    return "track-" + fileName;
+  }
 
 }
